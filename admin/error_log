@@ -1,0 +1,1 @@
+[26-Mar-2018 14:03:02 Europe/Helsinki] PHP Warning:  mysqli::mysqli(): Headers and client library minor version mismatch. Headers:100034 Library:50630 in /home/tcninvbs/public_html/system/library/db/mysqli.php on line 7
