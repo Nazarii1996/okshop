@@ -1,0 +1,1 @@
+<i class="icon-basket"></i><?=$text_items?>

@@ -26,14 +26,14 @@ class ControllerExtensionModuleCategory extends Controller {
 		$this->load->model('catalog/category');
 
 		$this->load->model('catalog/product');
-
+        $this->load->model('tool/image');
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
-
+        
 		foreach ($categories as $category) {
 			$children_data = array();
-
+          
 			if ($category['category_id'] == $data['category_id']) {
 				$children = $this->model_catalog_category->getCategories($category['category_id']);
 
@@ -52,11 +52,17 @@ class ControllerExtensionModuleCategory extends Controller {
 				'filter_category_id'  => $category['category_id'],
 				'filter_sub_category' => true
 			);
-
-			$data['categories'][] = array(
+            if($category['image']){
+            $image=$this->model_tool_image->resize($category['image'],300,189);
+            }
+            else{
+            $image = $this->model_tool_image->resize('placeholder.png',300,189);
+			}
+            $data['categories'][] = array(
 				'category_id' => $category['category_id'],
-				'name'        => $category['name'] . ($this->config->get('config_product_count') ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data) . ')' : ''),
-				'children'    => $children_data,
+				'name'        => $category['name'],
+				'image'       => $image,
+                'description'=> htmlspecialchars_decode($category['description']),
 				'href'        => $this->url->link('product/category', 'path=' . $category['category_id'])
 			);
 		}
