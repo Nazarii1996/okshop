@@ -16,7 +16,7 @@ define('DIR_CACHE', 'G:/os/OpenServer/domains/okshop.com/system/storage/cache/')
 define('DIR_DOWNLOAD', 'G:/os/OpenServer/domains/okshop.com/system/storage/download/');
 define('DIR_LOGS', 'G:/os/OpenServer/domains/okshop.com/system/storage/logs/');
 define('DIR_MODIFICATION', 'G:/os/OpenServer/domains/okshop.com/system/storage/modification/');
-define('DIR_UPLOAD', 'G:/os/OpenServer/domains/okshop.coms/ystem/storage/upload/');
+define('DIR_UPLOAD', 'G:/os/OpenServer/domains/okshop.com/system/storage/upload/');
 
 // DB
 define('DB_DRIVER', 'mysqli');

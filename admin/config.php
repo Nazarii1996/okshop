@@ -1,11 +1,11 @@
 <?php
 // HTTP
-define('HTTP_SERVER', 'http://o-k-shop.com.ua/admin/');
-define('HTTP_CATALOG', 'http://o-k-shop.com.ua/');
+define('HTTP_SERVER', 'http://okshop.com/admin/');
+define('HTTP_CATALOG', 'http://okshop.com/');
 
 // HTTPS
-define('HTTPS_SERVER', 'http://o-k-shop.com.ua/admin/');
-define('HTTPS_CATALOG', 'http://o-k-shop.com.ua/');
+define('HTTPS_SERVER', 'http://okshop.com/admin/');
+define('HTTPS_CATALOG', 'http://okshop.com/');
 
 // DIR
 define('DIR_APPLICATION', 'G:/os/OpenServer/domains/okshop.com/admin/');

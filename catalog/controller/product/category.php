@@ -24,7 +24,7 @@ class ControllerProductCategory extends Controller {
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
-			$order = 'ASC';
+			$order = 'DESC';
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -42,7 +42,7 @@ class ControllerProductCategory extends Controller {
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
+			'text' => "Главная",
 			'href' => $this->url->link('common/home')
 		);
 
@@ -86,9 +86,11 @@ class ControllerProductCategory extends Controller {
 		} else {
 			$category_id = 0;
 		}
-
+        $data['sort']=$sort;
+        $data['order']=$order;
+      
 		$category_info = $this->model_catalog_category->getCategory($category_id);
-
+        //$this->document->addScript('view/javascript/ocfilter/ocfilter.js','footer');
 		if ($category_info) {
 			$this->document->setTitle($category_info['meta_title']);
 			$this->document->setDescription($category_info['meta_description']);
@@ -176,7 +178,8 @@ class ControllerProductCategory extends Controller {
 			);
 
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
-
+            $data['page']=$page;
+            $data['category_id']=$category_id;
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
 			foreach ($results as $result) {
@@ -236,61 +239,39 @@ class ControllerProductCategory extends Controller {
 
 			$data['sorts'] = array();
 
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_default'),
-				'value' => 'p.sort_order-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.sort_order&order=ASC' . $url)
-			);
+	
 
 			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_name_asc'),
-				'value' => 'pd.name-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=pd.name&order=ASC' . $url)
+				'text'  => "имени",
+				'value' => 'pd.name-'.$order,
+                'val'   => 'pd.name',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=pd.name&order='.$order . $url)
 			);
+
+
 
 			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_name_desc'),
-				'value' => 'pd.name-DESC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=pd.name&order=DESC' . $url)
+				'text'  => "цене",
+				'value' => 'p.price-'.$order,
+                'val'   => 'p.price',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order='.$order . $url)
 			);
 
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_price_asc'),
-				'value' => 'p.price-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=ASC' . $url)
-			);
+	
 
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_price_desc'),
-				'value' => 'p.price-DESC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=DESC' . $url)
-			);
-
-			if ($this->config->get('config_review_status')) {
+		
 				$data['sorts'][] = array(
-					'text'  => $this->language->get('text_rating_desc'),
-					'value' => 'rating-DESC',
-					'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=rating&order=DESC' . $url)
+					'text'  => "популярности",
+					'value' => 'rating-'.$order,
+                    'val' =>'rating',
+					'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=rating&order='.$order . $url)
 				);
-
-				$data['sorts'][] = array(
-					'text'  => $this->language->get('text_rating_asc'),
-					'value' => 'rating-ASC',
-					'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=rating&order=ASC' . $url)
-				);
-			}
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_model_asc'),
-				'value' => 'p.model-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.model&order=ASC' . $url)
-			);
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_model_desc'),
-				'value' => 'p.model-DESC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.model&order=DESC' . $url)
-			);
+				        
+            
+            $data['order_asc']=$this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort='.$sort.'&order=ASC' . $url);
+            $data['order_desc']=$this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort='.$sort.'&order=DESC' . $url);
+            
+	
 
 			$url = '';
 
@@ -366,14 +347,24 @@ class ControllerProductCategory extends Controller {
 			$data['limit'] = $limit;
 
 			$data['continue'] = $this->url->link('common/home');
+            $this->document->addScript('/catalog/view/theme/okshop/js/jcf.min.js','footer');
+            $this->document->addScript('/catalog/view/theme/okshop/js/jcf.select.min.js','footer');
+            $this->document->addScript('/catalog/view/theme/okshop/js/jcf.checkbox.min.js','footer');
+            $this->document->addScript('/catalog/view/theme/okshop/js/all-prod.min.js','footer');
+            
+            
+            
 
+            
+            
+            $this->document->addLink('/catalog/view/theme/okshop/css/all-prod.css','stylesheet');
 			$data['column_left'] = $this->load->controller('common/column_left');
 			$data['column_right'] = $this->load->controller('common/column_right');
 			$data['content_top'] = $this->load->controller('common/content_top');
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
-
+       
 			$this->response->setOutput($this->load->view('product/category', $data));
 		} else {
 			$url = '';
@@ -429,4 +420,76 @@ class ControllerProductCategory extends Controller {
 			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
 	}
+    
+    public function getMore(){
+   	$this->load->language('product/category');
+
+		$this->load->model('catalog/category');
+
+		$this->load->model('catalog/product');
+
+		$this->load->model('tool/image');
+        
+        
+        
+        	$filter_data = array(
+				'filter_category_id' => $category_id,
+				'filter_filter'      => $filter,
+				'sort'               => $sort,
+				'order'              => $order,
+				'start'              => ($page - 1) * $limit,
+				'limit'              => $limit
+			);
+
+			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
+            $data['page']=$page;
+            $data['category_id']=$category_id;
+			$results = $this->model_catalog_product->getProducts($filter_data);
+
+			foreach ($results as $result) {
+				if ($result['image']) {
+					$image = $this->model_tool_image->resize($result['image'], $this->config->get($this->config->get('config_theme') . '_image_product_width'), $this->config->get($this->config->get('config_theme') . '_image_product_height'));
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get($this->config->get('config_theme') . '_image_product_width'), $this->config->get($this->config->get('config_theme') . '_image_product_height'));
+				}
+
+				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$price = false;
+				}
+
+				if ((float)$result['special']) {
+					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$special = false;
+				}
+
+				if ($this->config->get('config_tax')) {
+					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
+				} else {
+					$tax = false;
+				}
+
+				if ($this->config->get('config_review_status')) {
+					$rating = (int)$result['rating'];
+				} else {
+					$rating = false;
+				}
+
+				$data['products'][] = array(
+					'product_id'  => $result['product_id'],
+					'thumb'       => $image,
+					'name'        => $result['name'],
+					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..',
+					'price'       => $price,
+					'special'     => $special,
+					'tax'         => $tax,
+					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
+					'rating'      => $result['rating'],
+					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
+				);
+			}
+
+    }
 }
