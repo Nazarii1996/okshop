@@ -29,9 +29,15 @@ class ControllerProductCategory extends Controller {
 
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
+
 		} else {
 			$page = 1;
+       
 		}
+        
+        if(@$this->request->get['show_more']){
+                $page++;
+        }
 
 		if (isset($this->request->get['limit'])) {
 			$limit = (int)$this->request->get['limit'];
@@ -176,7 +182,7 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['products'] = array();
-
+        
 			$filter_data = array(
 				'filter_category_id' => $category_id,
 				'filter_filter'      => $filter,
@@ -185,6 +191,17 @@ class ControllerProductCategory extends Controller {
 				'start'              => ($page - 1) * $limit,
 				'limit'              => $limit
 			);
+            
+            if(@$this->request->get['show_more']){
+          		$filter_data = array(
+				'filter_category_id' => $category_id,
+				'filter_filter'      => $filter,
+				'sort'               => $sort,
+				'order'              => $order,
+				'start'              => 0,
+				'limit'              => $page  * $limit
+			);
+            }
 
 
   		// OCFilter start
@@ -359,7 +376,15 @@ class ControllerProductCategory extends Controller {
 			$pagination->page = $page;
 			$pagination->limit = $limit;
 			$pagination->url = $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url . '&page={page}');
-
+            
+            
+            $last_page=round($product_total/$limit);
+            
+            $data['sm']=true;
+            
+            if($last_page==$page){
+                $data['sm']=false;
+            }            
 			$data['pagination'] = $pagination->render();
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
@@ -486,8 +511,10 @@ class ControllerProductCategory extends Controller {
             
             
             
-
-            
+     
+            $data['link'] = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"."&page=".$page;
+            if(@$this->request->get['show_more'])
+                $data['show_more']=1;
             
             $this->document->addLink('/catalog/view/theme/okshop/css/all-prod.css','stylesheet');
 			$data['column_left'] = $this->load->controller('common/column_left');

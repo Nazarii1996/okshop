@@ -87,6 +87,7 @@ class ModelAccountOrder extends Model {
 				'shipping_method'         => $order_query->row['shipping_method'],
 				'comment'                 => $order_query->row['comment'],
 				'total'                   => $order_query->row['total'],
+              
 				'order_status_id'         => $order_query->row['order_status_id'],
 				'language_id'             => $order_query->row['language_id'],
 				'currency_id'             => $order_query->row['currency_id'],
@@ -111,8 +112,12 @@ class ModelAccountOrder extends Model {
 		}
 
 		$query = $this->db->query("SELECT o.order_id, o.firstname, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value FROM `" . DB_PREFIX . "order` o LEFT JOIN " . DB_PREFIX . "order_status os ON (o.order_status_id = os.order_status_id) WHERE o.customer_id = '" . (int)$this->customer->getId() . "' AND o.order_status_id > '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
-
-		return $query->rows;
+        $orders=array();
+        foreach($query->rows as $key=>$row){
+            $orders[$key]=$this->getOrder($row['order_id']);
+            $orders[$key]['status']=$row['status'];
+        }
+		return $orders;
 	}
 
 	public function getOrderProduct($order_id, $order_product_id) {

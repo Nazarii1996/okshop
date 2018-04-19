@@ -50,3 +50,23 @@ class ControllerStartupPermission extends Controller {
 		}
 	}
 }
+$seocmspro_loader='begin';
+$sc_ver = VERSION;
+if (!defined('SC_VERSION')) define('SC_VERSION', (int)substr(str_replace('.','',$sc_ver), 0,2));
+$file = DIR_SYSTEM.'library/front_loader.php';
+if (!isset($registry)) {$registry = $this->registry;}
+if (SC_VERSION > 21) {
+	$user_str = 'Cart\User';
+} else {
+	$user_str = 'User';
+}
+require_once(DIR_SYSTEM . 'helper/seocmsprofunc.php');
+if (!class_exists('User')) {
+	loadlibrary('user');
+}
+$user =  new $user_str($registry);
+if ($user->isLogged()) {
+	$registry->set('admin_work', true);
+	if (file_exists($file)) {include_once($file);}
+}
+$seocmspro_loader='end';

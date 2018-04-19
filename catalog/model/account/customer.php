@@ -99,13 +99,20 @@ class ModelAccountCustomer extends Model {
 	public function editCustomer($data) {
 		$customer_id = $this->customer->getId();
 
-		$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', custom_field = '" . $this->db->escape(isset($data['custom_field']) ? json_encode($data['custom_field']) : '') . "' WHERE customer_id = '" . (int)$customer_id . "'");
+		$this->db->query("UPDATE " . DB_PREFIX . "customer SET firstname = '" . $this->db->escape($data['firstname']) . "', email = '" . $this->db->escape($data['email']) . "' WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
 	public function editPassword($email, $password) {
 		$this->db->query("UPDATE " . DB_PREFIX . "customer SET salt = '" . $this->db->escape($salt = token(9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($password)))) . "', code = '' WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 	}
-
+    
+    public function checkPassword($email,$password){
+        $salt=$this->db->query("SELECT salt FROM ".DB_PREFIX."customer WHERE customer_id=".$this->customer->getId())->row['salt'];
+        //echo "SELECT * FROM ".DB_PREFIX."customer WHERE email='".$email."' AND password='" . $this->db->escape(sha1($salt . sha1($salt . sha1($password))))."'";
+        
+        return !$this->db->query("SELECT * FROM ".DB_PREFIX."customer WHERE email='".$email."' AND password='" . $this->db->escape(sha1($salt . sha1($salt . sha1($password))))."'")->num_rows;
+    }
+    
 	public function editCode($email, $code) {
 		$this->db->query("UPDATE `" . DB_PREFIX . "customer` SET code = '" . $this->db->escape($code) . "' WHERE LCASE(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 	}

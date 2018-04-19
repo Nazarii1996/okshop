@@ -68,7 +68,28 @@ class ControllerProductProduct extends Controller {
 		}
 
 		$this->load->model('catalog/manufacturer');
+        $this->document->addLink('/catalog/view/theme/okshop/css/one-prod.css','stylesheet');
+        
+        $this->document->addScript('/catalog/view/theme/okshop/js/jcf.min.js','footer');
+        
+        $this->document->addScript('/catalog/view/theme/okshop/js/jcf.select.min.js','footer');
+                $this->document->addScript('/catalog/view/theme/okshop/js/jcf.number.min.js','footer');
+        $this->document->addScript('/catalog/view/theme/okshop/js/jcf.checkbox.min.js','footer');
+        $this->document->addScript('/catalog/view/theme/okshop/js/jquery-ui.min.js','footer');
+        $this->document->addScript('/catalog/view/theme/okshop/js/one-prod.min.js','footer');
+        
+   /* <script src="../js/jquery.min.js"></script>
+    <script src="../js/slick.min.js"></script>
+    <script src="../js/jquery.matchHeight.min.js"></script>
+    <script src="../js/script.min.js"></script>
+    <script src="../js/jcf.min.js"></script>
+    <script src="../js/jcf.select.min.js"></script>
+    <script src="../js/"></script>*/
 
+
+
+        
+        
 		if (isset($this->request->get['manufacturer_id'])) {
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_brand'),
@@ -159,6 +180,11 @@ class ControllerProductProduct extends Controller {
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
+            $watched = isset($this->request->cookie["youwatched"]) ? unserialize(html_entity_decode($this->request->cookie["youwatched"])) : array();
+            $watched[$product_id] = time();
+            setcookie("youwatched", serialize($watched), time() + 60 * 60 * 24 * 365, '/');
+            
+            
 			$url = '';
 
 			if (isset($this->request->get['path'])) {
@@ -278,7 +304,10 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['stock'] = $this->language->get('text_instock');
 			}
-
+            
+            
+            $data['incart']=$this->cart->isProductInCart($product_id);
+            
 			$this->load->model('tool/image');
 
 			if ($product_info['image']) {

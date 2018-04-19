@@ -1,3 +1,65 @@
 .price i{
     display:none;
 }
+.jcf-select-text{
+    width:224px;
+}
+.btn-red{
+    border: 1px solid #ff7380;
+    background-color: #ff7380;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 400;
+    width: 20%;
+    height: 30px;
+    margin-top: 30px;
+}
+
+.textarea{
+    border: 1px solid #d7d7d7;
+    background-color: #ffffff;
+    resize: none;
+    min-height: 130px;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    color: #686868;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.close{
+    display:none;
+}
+
+.answerpop .btn-red{
+    width:auto;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+@media screen and (min-width: 768px) {
+    .answerpop .popcont form {
+        display: block;
+   
+    }
+ 
+ 
+    
+}

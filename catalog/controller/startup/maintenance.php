@@ -23,3 +23,9 @@ class ControllerStartupMaintenance extends Controller {
 		}
 	}
 }
+  $seocmspro_loader='begin';
+$sc_ver = VERSION;
+if (!defined('SC_VERSION')) define('SC_VERSION', (int)substr(str_replace('.','',$sc_ver), 0,2));
+$file = DIR_SYSTEM . 'library/front_loader.php';
+if (file_exists($file)) {include_once($file);}
+$seocmspro_loader='end';

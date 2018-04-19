@@ -75,7 +75,7 @@ class ControllerExtensionModuleOCFilter extends Controller {
         $this->max_price = $this->currency->format(ceil($this->product_prices['max']), $this->session->data['currency'], '', false);
       }
     }
-
+    
     $this->registry->set('ocfilter', $this);
   }
 
@@ -169,6 +169,25 @@ class ControllerExtensionModuleOCFilter extends Controller {
 
     $this->document->addScript('catalog/view/javascript/ocfilter/nouislider.min.js');
     $this->document->addScript('catalog/view/javascript/ocfilter/ocfilter.js');
+    
+    
+		$this->load->model('catalog/product');
+        $this->load->model('tool/image');
+        $parts = explode('_', $this->path);
+     
+		$data['categories'] = array();
+
+		$categories = $this->model_catalog_category->getCategories($parts[0]);
+        
+		foreach ($categories as $category) {
+	
+            $data['categories'][] = array(
+				'category_id' => $category['category_id'],
+				'name'        => $category['name'],
+				'href'        => $this->url->link('product/category', 'path=' . $parts[0]."_".$category['category_id'])
+			);
+		}
+       // print_r($data['categories']);
 
 		return $this->load->view('extension/module/ocfilter/module', $data);
 	}

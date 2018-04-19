@@ -32,6 +32,7 @@ $_['column_status']          = 'Статус';
 $_['column_action']          = 'Действие';
 
 // Entry
+$_['entry_main_category']    = 'Главная категория:';
 $_['entry_name']             = 'Название товара';
 $_['entry_description']      = 'Описание';
 $_['entry_meta_title'] 	     = 'Мета-тег Title';

@@ -5,18 +5,14 @@
     <meta charset="UTF-8">
     <title><?=$title?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0;" />
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Comfortaa:300,400,700&amp;subset=cyrillic" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="16x16" href="/catalog/view/theme/okshop/img/favicon_ok.png">
     <link rel="stylesheet" href="/catalog/view/theme/okshop/css/style.css">
     <link rel="stylesheet" href="/catalog/view/theme/okshop/css/opencart.css">
   
   <script src="/catalog/view/theme/okshop/js/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
-    <base href="<?php echo $base; ?>" />
     <?php if ($description) { ?>
         <meta name="description" content="<?php echo $description; ?>" />
     <?php } ?>
@@ -24,7 +20,7 @@
         <meta name="keywords" content= "<?php echo $keywords; ?>" />
     <?php } ?>
     
-    
+     
     <?php foreach ($styles as $style) { ?>
         <link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>" media="<?php echo $style['media']; ?>" />
     <?php } ?>
@@ -33,7 +29,7 @@
         <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
     <?php } ?>
     <?php foreach ($scripts as $script) { ?>
-        <script src="<?php echo $script; ?>" type="text/javascript"></script>
+        <script src="<?php echo $script; ?>" type="text/javascript"></script> 
     <?php } ?>
         <?php foreach ($analytics as $analytic) { ?>
         <?php echo $analytic; ?>
@@ -67,9 +63,7 @@
                         <div class="my-account">
                             <a class="wish-list" href="<?=$wishlist?>">Список желаний</a>
                             <div class="basket">
-                                <p><i class="icon-basket"></i></p>
-                                <p class="price"><?=$cart?></p>
-                                <a href="javascript:void(0)"></a>
+                            <?=$cart?>
                             </div>
                             <div class="pers">
                                 <div class="osn">
@@ -172,7 +166,39 @@
                 </div>
             </div>
         </section>
-
+        <section class="onbask">
+            <div class="popcont">
+                <div class="onbask-x">
+                    <span></span>
+                </div>
+                <p>Товар добавлен в корзину</p>
+                <div class="tov">
+                    <div class="img">
+                        <img>
+                    </div>
+                    <div class="text">
+                        <div class="text-item title">
+                            <p class="first">Хайлайтер Wet n Wild MegaGlo™ Illuminating Powder Catwalk Pink</p>
+                            <p class="sec"></p>
+                        </div>
+                
+          
+                        <div class="text-item quantity">
+                            <p class="first">Количество:</p>
+                            <p class="sec">2</p>
+                        </div>
+                        <div class="text-item price">
+                            <p class="first">Цена:</p>
+                            <p class="sec">468 грн</p>
+                        </div>
+                    </div>
+                </div>
+                <form>
+                    <input class="ent" type="submit" value="Перейти в корзину">
+                    <input type="submit" value="Продолжить покупки">
+                </form>
+            </div>
+        </section>
         <section class="loginpop">
             <div class="popcont">
                 <div class="login-x">
@@ -180,7 +206,7 @@
                 </div>
                 <p>Вход</p>
                 
-                <form action="index.php?route=account/login/popup" id="login_popup" >
+                <form action="/index.php?route=account/login/popup" id="login_popup" >
                 <span class="error"></span>
                     <input type="text"  name="email" placeholder="E-mail">
                     <input type="password" name="password" placeholder="Пароль">

@@ -76,6 +76,8 @@ class ModelToolExportImport extends Model {
 
 	public function __construct( $registry ) {
 		parent::__construct( $registry );
+        /*echo $this->translit("Dermacol Оригинальный Тональный крем для лица с маскирующим свойством Dermacol Make-Up Cover");
+        exit;*/
 		$this->use_table_seo_url = version_compare(VERSION,'3.0','>=') ? true : false;
 	}
 
@@ -213,10 +215,10 @@ class ModelToolExportImport extends Model {
 
 
 	protected function storeManufacturerIntoDatabase( &$manufacturers, $name, &$store_ids, &$available_store_ids ) {
+	   $store_ids=array("0");
 		foreach ($store_ids as $store_id) {
-			if (!in_array( $store_id, $available_store_ids )) {
-				continue;
-			}
+
+	
 			if (!isset($manufacturers[$name]['manufacturer_id'])) {
 				$this->db->query("INSERT INTO ".DB_PREFIX."manufacturer SET name = '".$this->db->escape($name)."', image='', sort_order = '0'");
 				$manufacturer_id = $this->db->getLastId();
@@ -231,6 +233,8 @@ class ModelToolExportImport extends Model {
 			if (!in_array($store_id,$manufacturers[$name]['store_ids'])) {
 				$manufacturer_id = $manufacturers[$name]['manufacturer_id'];
 				$sql = "INSERT INTO `".DB_PREFIX."manufacturer_to_store` SET manufacturer_id='".(int)$manufacturer_id."', store_id='".(int)$store_id."'";
+          
+                
 				$this->db->query( $sql );
 				$manufacturers[$name]['store_ids'][] = $store_id;
 			}
@@ -385,7 +389,7 @@ class ModelToolExportImport extends Model {
 	}
 
 
-	protected function storeCategoryIntoDatabase( &$category, &$languages, $exist_meta_title, &$layout_ids, &$available_store_ids, &$url_alias_ids ) {
+	protected function storeCategoryIntoDatabase( &$category, &$languages, $exist_meta_title, &$layout_ids, &$available_store_ids, &$url_alias_ids ,&$key="0") {
 		// extract the category details
         //print_r($category);
 		$category_id = $category['category_id'];
@@ -394,7 +398,7 @@ class ModelToolExportImport extends Model {
 		$top = $category['top'];
 		$top = 1;
 		$columns = 1;
-		$sort_order = 0;
+		$sort_order = $key;
 		$date_added = $category['date_added'];
 		$date_modified = $category['date_modified'];
 		$names = $category['names'];
@@ -404,10 +408,10 @@ class ModelToolExportImport extends Model {
 		}
 		$meta_descriptions = $category['meta_descriptions'];
 		$meta_keywords = $category['meta_keywords'];
-		if (!$this->use_table_seo_url) {
-			$seo_keyword = $category['seo_keyword'];
-		}
-		$store_ids = $category['store_ids'];
+
+			$seo_keyword = $this->translit($names[1]);
+	
+		$store_ids = array("0");
 		$layout = $category['layout'];
 		$status = 1;
 	//	$status = ((strtoupper($status)=="TRUE") || (strtoupper($status)=="YES") || (strtoupper($status)=="ENABLED")) ? 1 : 0;
@@ -428,7 +432,7 @@ class ModelToolExportImport extends Model {
 			$name = isset($names[$language_code]) ? $this->db->escape($names[$language_code]) : '';
 			$description = isset($descriptions[$language_code]) ? $this->db->escape($descriptions[$language_code]) : '';
 			if ($exist_meta_title) {
-				$meta_title = isset($meta_titles[$language_code]) ? $this->db->escape($meta_titles[$language_code]) : '';
+				$meta_title = isset($names[$language_code]) ? $this->db->escape($names[$language_code]) : '';
 			}
 			$meta_description = isset($meta_descriptions[$language_code]) ? $this->db->escape($meta_descriptions[$language_code]) : '';
 			$meta_keyword = isset($meta_keywords[$language_code]) ? $this->db->escape($meta_keywords[$language_code]) : '';
@@ -454,10 +458,10 @@ class ModelToolExportImport extends Model {
 			}
 		}
 		foreach ($store_ids as $store_id) {
-			if (in_array((int)$store_id,$available_store_ids)) {
+	
 				$sql = "INSERT INTO `".DB_PREFIX."category_to_store` (`category_id`,`store_id`) VALUES ($category_id,$store_id);";
 				$this->db->query($sql);
-			}
+			
 		}
 		$layouts = array();
 		foreach ($layout as $layout_part) {
@@ -627,7 +631,7 @@ class ModelToolExportImport extends Model {
 				$seo_keyword = $this->getCell($data,$i,$j++,'');
 			}
 			$descriptions = array();
-		/*	while ($this->startsWith($first_row[$j-1],"��������_������")) {
+		/*	while ($this->startsWith($first_row[$j-1],"Название_группы")) {
 				$language_code = substr($first_row[$j-1],strlen("description("),strlen($first_row[$j-1])-strlen("description(")-1);
 				$description = $this->getCell($data,$i,$j++);
 				$description = htmlspecialchars( $description );
@@ -635,7 +639,7 @@ class ModelToolExportImport extends Model {
 				$descriptions[1] = $description;
 			}
 */
-			$store_ids = $this->getCell($data,$i,$j++,'0');
+			$store_ids =array("1");
 			$layout = $this->getCell($data,$i,$j++,'');
 			$status = $this->getCell($data,$i,$j++,'1');
 			$category = array();
@@ -676,7 +680,7 @@ class ModelToolExportImport extends Model {
 			}
 			$available_category_ids[$category_id] = $category_id;
 			//$this->moreCategoryCells( $i, $j, $data, $category );
-			$this->storeCategoryIntoDatabase( $category, $languages, $exist_meta_title, $layout_ids, $available_store_ids, $url_alias_ids );
+			$this->storeCategoryIntoDatabase( $category, $languages, $exist_meta_title, $layout_ids, $available_store_ids, $url_alias_ids,$i );
             
 		}
 
@@ -998,9 +1002,9 @@ class ModelToolExportImport extends Model {
 		$length = $product['length'];
 		$width = $product['width'];
 		$height = $product['height'];
-		if (!$this->use_table_seo_url) {
-			$keyword = $this->db->escape(" ");
-		}
+
+			$keyword = $this->db->escape($this->translit($names[1]));
+
 		$length_unit = $product['measurement_unit'];
 		$length_class_id = (isset($length_class_ids[$length_unit])) ? $length_class_ids[$length_unit] : 0;
 		$sku = $this->db->escape($product['sku']);
@@ -1045,7 +1049,7 @@ class ModelToolExportImport extends Model {
 			$name = isset($names[$language_code]) ? $this->db->escape($names[$language_code]) : '';
 			$description = isset($descriptions[$language_code]) ? $this->db->escape($descriptions[$language_code]) : '';
 			if ($exist_meta_title) {
-				$meta_title = isset($meta_titles[$language_code]) ? $this->db->escape($meta_titles[$language_code]) : '';
+				$meta_title =  isset($names[$language_code]) ? $this->db->escape($names[$language_code]) : '';
 			}
 			$meta_description = isset($descriptions[$language_code]) ? $this->db->escape($descriptions[$language_code]) : '';
 			$meta_keyword = isset($meta_keywords[$language_code]) ? $this->db->escape($meta_keywords[$language_code]) : '';
@@ -1073,6 +1077,10 @@ class ModelToolExportImport extends Model {
 				$this->db->query( $sql );
 			}
 		}
+        
+        $categories[]=$this->db->query("SELECT * FROM ".DB_PREFIX."category WHERE category_id=".$categories[0])->row['parent_id'];
+        
+        
 		if (count($categories) > 0) {
 			$sql = "INSERT INTO `".DB_PREFIX."product_to_category` (`product_id`,`category_id`) VALUES ";
 			$first = true;
@@ -1288,7 +1296,7 @@ class ModelToolExportImport extends Model {
            // echo "fasfqw";
 			$sku = $this->getCell($data,$i,1,'');
             //echo "123123";
-			$upc = $this->getCell($data,$i,$j++,'');
+			$upc = $this->getCell($data,$i,1,'');
             //echo ";fa";
 			if (in_array('ean',$product_fields)) {
 				$ean = $this->getCell($data,$i,$j++,'');
@@ -1305,8 +1313,8 @@ class ModelToolExportImport extends Model {
            // echo "-";
 			$location = "";
 			$quantity = $this->getCell($data,$i,14,'0');
-			$model = $this->getCell($data,$i,$j++,'   ');
-			$manufacturer_name = $this->getCell($data,$i,26);
+			$model = $this->getCell($data,$i,21,'   ');
+			$manufacturer_name = $this->getCell($data,$i,25);
 			
             
             
@@ -1421,35 +1429,31 @@ class ModelToolExportImport extends Model {
 			$this->storeProductIntoDatabase( $product, $languages, $product_fields, $exist_table_product_tag, $exist_meta_title, $layout_ids, $available_store_ids, $manufacturers, $weight_class_ids, $length_class_ids, $url_alias_ids );
 		}
 	}
+    
+    private  function translit($s) {
+  $s = (string) $s; // преобразуем в строковое значение
+  $s = strip_tags($s); // убираем HTML-теги
+  $s = str_replace(array("\n", "\r"), " ", $s); // убираем перевод каретки
+  $s = preg_replace("/\s+/", ' ', $s); // удаляем повторяющие пробелы
+  $s = trim($s); // убираем пробелы в начале и конце строки
+  $s = function_exists('mb_strtolower') ? mb_strtolower($s) : strtolower($s); // переводим строку в нижний регистр (иногда надо задать локаль)
+  $s = strtr($s, array('а'=>'a','б'=>'b','в'=>'v','г'=>'g','д'=>'d','е'=>'e','ё'=>'e','ж'=>'j','з'=>'z','и'=>'i','й'=>'y','к'=>'k','л'=>'l','м'=>'m','н'=>'n','о'=>'o','п'=>'p','р'=>'r','с'=>'s','т'=>'t','у'=>'u','ф'=>'f','х'=>'h','ц'=>'c','ч'=>'ch','ш'=>'sh','щ'=>'shch','ы'=>'y','э'=>'e','ю'=>'yu','я'=>'ya','ъ'=>'','ь'=>''));
+  $s = preg_replace("/[^0-9a-z-_ ]/i", "", $s); // очищаем строку от недопустимых символов
+  $s = str_replace(" ", "-", $s); // заменяем пробелы знаком минус
+  return $s; // возвращаем результат
+}
 
 
 	protected function storeAdditionalImageIntoDatabase( &$image, &$old_product_image_ids, $exist_sort_order=true ) {
 		$product_id = $image['product_id'];
 		$image_name = $image['image_name'];
-		if ($exist_sort_order) {
-			$sort_order = $image['sort_order'];
-		}
-		if (isset($old_product_image_ids[$product_id][$image_name])) {
-			$product_image_id = $old_product_image_ids[$product_id][$image_name];
-			if ($exist_sort_order) {
-				$sql  = "INSERT INTO `".DB_PREFIX."product_image` (`product_image_id`,`product_id`,`image`,`sort_order` ) VALUES "; 
-				$sql .= "($product_image_id,$product_id,'".$this->db->escape($image_name)."',$sort_order)";
-			} else {
-				$sql  = "INSERT INTO `".DB_PREFIX."product_image` (`product_image_id`,`product_id`,`image` ) VALUES "; 
-				$sql .= "($product_image_id,$product_id,'".$this->db->escape($image_name)."')";
-			}
-			$this->db->query($sql);
-			unset($old_product_image_ids[$product_id][$image_name]);
-		} else {
-			if ($exist_sort_order) {
-				$sql  = "INSERT INTO `".DB_PREFIX."product_image` (`product_id`,`image`,`sort_order` ) VALUES "; 
-				$sql .= "($product_id,'".$this->db->escape($image_name)."',$sort_order)";
-			} else {
-				$sql  = "INSERT INTO `".DB_PREFIX."product_image` (`product_id`,`image` ) VALUES "; 
-				$sql .= "($product_id,'".$this->db->escape($image_name)."')";
-			}
-			$this->db->query($sql);
-		}
+		$sort_order=0;
+        foreach($image_name as $key=>$image){
+     			$sql  = "INSERT INTO `".DB_PREFIX."product_image` (`product_id`,`image`,`sort_order` ) VALUES "; 
+				$sql .= "($product_id,'".$this->db->escape($image)."',$key)";
+                $this->db->query($sql);
+        }
+        
 	}
 
 
@@ -1493,7 +1497,7 @@ class ModelToolExportImport extends Model {
 
 	protected function uploadAdditionalImages( &$reader, $incremental, &$available_product_ids ) {
 		// get worksheet, if not there return immediately
-		$data = $reader->getSheetByName( 'AdditionalImages' );
+		$data = $reader->getSheetByName( 'Export Products Sheet' );
 		if ($data==null) {
 			return;
 		}
@@ -1520,20 +1524,29 @@ class ModelToolExportImport extends Model {
 			if ($i==0) {
 				continue;
 			}
-			$product_id = trim($this->getCell($data,$i,$j++));
+			$product_id = trim($this->getCell($data,$i,21));
 			if ($product_id=="") {
 				continue;
-			}
-			$image_name = $this->getCell($data,$i,$j++,'');
+			}          
+            $images=explode(",",$this->getCell($data,$i,12));
+            $image_name=array();
+            foreach($images as $key=>$image){
+                if($key==0)
+                    continue;
+            file_put_contents(DIR_IMAGE.'catalog/products/'.$product_id.'_'.$key.'.jpg', file_get_contents($image));
+            $image_name[] ='catalog/products/'.$product_id.'_'.$key.'.jpg';
+            }
+            
+		/*	$image_name = $this->getCell($data,$i,$j++,'');
 			if ($exist_sort_order) {
 				$sort_order = $this->getCell($data,$i,$j++,'0');
-			}
+			}*/
 			$image = array();
 			$image['product_id'] = $product_id;
 			$image['image_name'] = $image_name;
-			if ($exist_sort_order) {
+			/*if ($exist_sort_order) {
 				$image['sort_order'] = $sort_order;
-			}
+			}*/
 			if (($incremental) && ($product_id != $previous_product_id)) {
 				$old_product_image_ids = $this->deleteAdditionalImage( $product_id );
 				if (isset($unlisted_product_ids[$product_id])) {
@@ -2293,9 +2306,10 @@ class ModelToolExportImport extends Model {
 		foreach ($languages as $language) {
 			$language_code = $language['code'];
 			$language_id = $language['language_id'];
-			$text = isset($texts[$language_code]) ? $this->db->escape($texts[$language_code]) : '';
+			$text =$this->db->escape($texts);
 			$sql  = "INSERT INTO `".DB_PREFIX."product_attribute` (`product_id`, `attribute_id`, `language_id`, `text`) VALUES ";
 			$sql .= "( $product_id, $attribute_id, $language_id, '$text' );";
+            //echo $sql;
 			$this->db->query( $sql );
 		}
 	}
@@ -2329,7 +2343,7 @@ class ModelToolExportImport extends Model {
 
 	protected function uploadProductAttributes( &$reader, $incremental, &$available_product_ids ) {
 		// get worksheet, if not there return immediately
-		$data = $reader->getSheetByName( 'ProductAttributes' );
+		$data = $reader->getSheetByName( 'Export Products Sheet' );
 		if ($data==null) {
 			return;
 		}
@@ -2349,7 +2363,7 @@ class ModelToolExportImport extends Model {
 		}
 
 		// load the worksheet cells and store them to the database
-		$languages = $this->getLanguages();
+		$languages = array("1");
 		$previous_product_id = 0;
 		$first_row = array();
 		$i = 0;
@@ -2363,40 +2377,41 @@ class ModelToolExportImport extends Model {
 				continue;
 			}
 			$j = 1;
-			$product_id = trim($this->getCell($data,$i,$j++));
+			$product_id = trim($this->getCell($data,$i,21));
 			if ($product_id=='') {
 				continue;
 			}
-			if ($this->config->get( 'export_import_settings_use_attribute_group_id' )) {
-				$attribute_group_id = $this->getCell($data,$i,$j++,'');
-			} else {
-				$attribute_group_name = $this->getCell($data,$i,$j++);
-				$attribute_group_id = isset($attribute_group_ids[$attribute_group_name]) ? $attribute_group_ids[$attribute_group_name] : '';
-			}
+	       $attribute_group_id=7;
 			if ($attribute_group_id=='') {
 				continue;
 			}
-			if ($this->config->get( 'export_import_settings_use_attribute_id' )) {
-				$attribute_id = $this->getCell($data,$i,$j++,'');
-			} else {
-				$attribute_name = $this->getCell($data,$i,$j++);
-				$attribute_id = isset($attribute_ids[$attribute_group_id][$attribute_name]) ? $attribute_ids[$attribute_group_id][$attribute_name] : '';
-			}
-			if ($attribute_id=='') {
+	                   $c=31;
+            $attribute=array();
+            for($cell=31;$cell<=$k;$cell+=3){
+                $val=$this->getCell($data,$i,$cell);
+                if($val){
+	           $attribute[]=array("name"=>$val,
+                                        "text"=>$this->getCell($data,$i,$cell+2));
+           }
+           
+           }
+          
+    
+    
+	       $attribute_name = $this->getCell($data,$i,$j++);
+	       $attributes = $this->storeAttributeIntoDatabase($attribute);
+			
+			if (!$attributes) {
 				continue;
 			}
 			$texts = array();
-			while (($j<=$max_col) && $this->startsWith($first_row[$j-1],"text(")) {
-				$language_code = substr($first_row[$j-1],strlen("text("),strlen($first_row[$j-1])-strlen("text(")-1);
-				$text = $this->getCell($data,$i,$j++);
-				$text = htmlspecialchars( $text );
-				$texts[$language_code] = $text;
-			}
+		      foreach($attributes as $attr){
 			$product_attribute = array();
 			$product_attribute['product_id'] = $product_id;
-			$product_attribute['attribute_group_id'] = $attribute_group_id;
-			$product_attribute['attribute_id'] = $attribute_id;
-			$product_attribute['texts'] = $texts;
+			$product_attribute['attribute_group_id'] = 7;
+			$product_attribute['attribute_id'] = $attr['attribute_id'];
+			$product_attribute['texts'] = $attr['text'];
+           // echo $attr['text']."<br />";
 			if (($incremental) && ($product_id != $previous_product_id)) {
 				$this->deleteProductAttribute( $product_id );
 				if (isset($unlisted_product_ids[$product_id])) {
@@ -2410,6 +2425,7 @@ class ModelToolExportImport extends Model {
 		if ($incremental) {
 			$this->deleteUnlistedProductAttributes( $unlisted_product_ids );
 		}
+        }
 	}
 
 
@@ -3005,22 +3021,57 @@ class ModelToolExportImport extends Model {
 	}
 
 
-	protected function storeAttributeIntoDatabase( &$attribute, &$languages ) {
-		$attribute_id = $attribute['attribute_id'];
-		$attribute_group_id = $attribute['attribute_group_id'];
-		$sort_order = $attribute['sort_order'];
-		$names = $attribute['names'];
-		$sql  = "INSERT INTO `".DB_PREFIX."attribute` (`attribute_id`,`attribute_group_id`,`sort_order`) VALUES ";
-		$sql .= "( $attribute_id, $attribute_group_id, $sort_order );"; 
-		$this->db->query( $sql );
+	protected function storeAttributeIntoDatabase( &$attributes, &$languages=array("1") ) {
+	//   print_r($attributes);
+       $storeProductsAttr=array();
+	   foreach($attributes as $attr){
+	     //  print_r($attr);
+		$attribute=$this->db->query("SELECT * FROM ".DB_PREFIX."attribute_description WHERE name='".$attr['name']."'")->row;
+        if(!$attribute){
+           // echo "CREATED ATTRUBITE"."<br />";
+            		$attribute_group_id = 7;
+		  $sort_order = 0;
+		  $name = $attr['name'];
+		  $sql  = "INSERT INTO `".DB_PREFIX."attribute` (`attribute_group_id`,`sort_order`) VALUES ";
+		  $sql .= "(  $attribute_group_id, $sort_order );"; 
+		  $this->db->query( $sql );
+          $attribute_id=$this->db->getLastId();
 		foreach ($languages as $language) {
 			$language_code = $language['code'];
-			$language_id = $language['language_id'];
-			$name = isset($names[$language_code]) ? $this->db->escape($names[$language_code]) : '';
+			$language_id = 1;
+			$name = isset($name) ? $this->db->escape($name) : '';
 			$sql  = "INSERT INTO `".DB_PREFIX."attribute_description` (`attribute_id`, `language_id`, `name`) ";
 			$sql .= "VALUES ( $attribute_id, $language_id, '$name' );";
 			$this->db->query( $sql );
 		}
+            
+        }else{
+            $attribute_id=$attribute['attribute_id'];
+           // echo "THIS ATTRIBUTE IS OLD:".$attribute_id."<br />";
+        }
+        
+        $storeProductsAttr[]=array("attribute_id"=>$attribute_id,
+                                 "language_id"=>1,
+                                 "text"=>$attr['text']);
+        
+        
+       // echo "<hr>";
+        
+        
+        
+        }
+        return $storeProductsAttr;
+        
+        
+        
+        
+       
+        
+        
+        
+        
+        
+
 	}
 
 
@@ -3074,7 +3125,7 @@ class ModelToolExportImport extends Model {
 				continue;
 			}
 			$j = 1;
-			$attribute_id = trim($this->getCell($data,$i,$j++));
+			$attribute_id = $i;
 			if ($attribute_id=='') {
 				continue;
 			}
@@ -5824,22 +5875,24 @@ class ModelToolExportImport extends Model {
             
 			$this->uploadProducts( $reader, $incremental, $available_product_ids );
 			$this->uploadAdditionalImages( $reader, $incremental, $available_product_ids );
-			$this->uploadSpecials( $reader, $incremental, $available_product_ids );
-			$this->uploadDiscounts( $reader, $incremental, $available_product_ids );
+		//	$this->uploadSpecials( $reader, $incremental, $available_product_ids );
+		/*	$this->uploadDiscounts( $reader, $incremental, $available_product_ids );
 			$this->uploadRewards( $reader, $incremental, $available_product_ids );
 			$this->uploadProductOptions( $reader, $incremental, $available_product_ids );
-			$this->uploadProductOptionValues( $reader, $incremental, $available_product_ids );
+			$this->uploadProductOptionValues( $reader, $incremental, $available_product_ids );*/
+            	//	$this->uploadAttributes( $reader, $incremental );
 			$this->uploadProductAttributes( $reader, $incremental, $available_product_ids );
-			$this->uploadProductFilters( $reader, $incremental, $available_product_ids );
-			$this->uploadProductSEOKeywords( $reader, $incremental, $available_product_ids );
-			$this->uploadOptions( $reader, $incremental );
+			//$this->uploadAttributeGroups( $reader, $incremental );
+	
+			/*$this->uploadProductFilters( $reader, $incremental, $available_product_ids );
+			$this->uploadProductSEOKeywords( $reader, $incremental, $available_product_ids );*/
+		/*	$this->uploadOptions( $reader, $incremental );
 			$this->uploadOptionValues( $reader, $incremental );
-			$this->uploadAttributeGroups( $reader, $incremental );
-			$this->uploadAttributes( $reader, $incremental );
+
 			$this->uploadFilterGroups( $reader, $incremental );
 			$this->uploadFilters( $reader, $incremental );
 			$this->uploadCustomers( $reader, $incremental, $available_customer_ids );
-			$this->uploadAddresses( $reader, $incremental, $available_customer_ids );
+			$this->uploadAddresses( $reader, $incremental, $available_customer_ids );*/
 			return true;
 		} catch (Exception $e) {
 			$errstr = $e->getMessage();

@@ -29,6 +29,12 @@ class Cart {
 			}
 		}
 	}
+    
+    public function isProductInCart($product_id){
+   	$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id=".$product_id);
+    return $cart_query->num_rows;
+    }
+    
 
 	public function getProducts() {
 		$product_data = array();

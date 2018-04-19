@@ -6,7 +6,8 @@ class ControllerInformationContact extends Controller {
 		$this->load->language('information/contact');
 
 		$this->document->setTitle($this->language->get('heading_title'));
-
+        $this->document->addLink('/catalog/view/theme/okshop/css/contact.css','stylesheet');
+         
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$mail = new Mail();
 			$mail->protocol = $this->config->get('config_mail_protocol');
@@ -33,7 +34,10 @@ class ControllerInformationContact extends Controller {
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/home')
 		);
-
+        
+        
+        $data['contancts']=htmlspecialchars_decode($this->config->get('config_comment'));
+        $data['work_time']=htmlspecialchars_decode($this->config->get('config_open'));
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
 			'href' => $this->url->link('information/contact')

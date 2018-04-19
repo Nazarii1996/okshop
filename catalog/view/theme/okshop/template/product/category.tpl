@@ -1,3 +1,6 @@
+
+
+<?php if(!isset($show_more)){?>
 <?php echo $header; ?>
 
         <section class="filter">
@@ -88,9 +91,14 @@
         <section class="bread-crumbs">
             <div class="container">
                 <ul>
-                <?php foreach($breadcrumbs as $b){?>
-                    <li class=""><a href="<?=$b['href']?>"><?=$b['text']?></a></li>
+                <?php foreach($breadcrumbs as $key=>$breadcrumb){?>
+                    <li class=""><a href="<?=$breadcrumb['href']?>"><?=$breadcrumb['text']?></a>
+                    
+                    <?php if(count($breadcrumbs)-1!=$key){?>
+                    <i class="icon-right-open-mini"></i></li>
                     <?php } ?>
+                <?php } ?>
+
                 </ul>
             </div>
         </section>
@@ -100,6 +108,7 @@
                 <div class="all-prod-cont">
           <?=$column_left?>
                     <div class="products">
+                    <?php } ?>
                         <div class="sorts">
                             <div class="sort-desc">
                                 <p class="t">Сортировка по:</p>
@@ -122,7 +131,7 @@
                         </div>
                         <div class="products-cont">
                            
-                            
+                           <?php if(!empty($products)){?> 
                             <?php foreach($products as $product){?>
                             <div class="product">
                             
@@ -151,297 +160,29 @@
                                 <a href="<?=$product['href']?>"></a>
                             </div>
                                  <?php } ?>
+                                 <?php } else { ?>
+                                 <?=$text_empty?>
+                                 <?php } ?>
+                                 
                         </div>
-                   
+                   <?php if($pagination){?>
                         <div class="more">
-                            <a class="show-more" onclick="showmore(<?=$category_id?>,<?=$page?>,<?=$sort?>,<?=$order?>)" href="javascript:void(0)">Показать больше</a>
+                        
+                            <a class="show-more" <?php if(!$sm){?>style="border:none;"<?php } ?> onclick="showmore('<?=$link?>&show_more=1');"><?php if($sm){?>Показать больше<?php } ?></a>
+                       
                             <?=$pagination?>
                         </div>
+                        <?php } ?>
+                        <?php if(!isset($show_more)){?>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="other-products">
-            <div class="container">
-                <div class="tit">
-                    <h3>Мы рекомендуем</h3>
-                </div>
-                <div class="product-cont">
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img1.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Хайлайтер Wet n Wild MegaGlo™ Illuminating Powder Catwalk Pink</p>
-                        <p class="price">268<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img2.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">REAL TECHNIQUES 2 Miracle Mini Eraser Sponges набор 2 спонжа США</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img3.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Палетка теней Maybelline The blushed nudes</p>
-                        <p class="price">320<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img4.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Пудра-хайлайтер для лица Wet n Wild Holiday Gold Bar Highlighter</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img4.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Пудра-хайлайтер для лица Wet n Wild Holiday Gold Bar Highlighter</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                </div>
-            </div>
-        </section>
+      <?=$content_bottom?>
 
-        <section class="other-products">
-            <div class="container">
-                <div class="tit">
-                    <h3>Вы просматривали</h3>
-                </div>
-                <div class="product-cont">
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img1.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Хайлайтер Wet n Wild MegaGlo™ Illuminating Powder Catwalk Pink</p>
-                        <p class="price">268<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img2.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">REAL TECHNIQUES 2 Miracle Mini Eraser Sponges набор 2 спонжа США</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img3.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Палетка теней Maybelline The blushed nudes</p>
-                        <p class="price">320<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img4.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Пудра-хайлайтер для лица Wet n Wild Holiday Gold Bar Highlighter</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                    <div class="product">
-                        <div class="prod-img">
-                            <img src="/catalog/view/theme/okshop/img/prod-img4.png">
-                            <ul class="choice">
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-star"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-basket-1"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)">
-                                        <i class="icon-dot-3"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <p class="description">Пудра-хайлайтер для лица Wet n Wild Holiday Gold Bar Highlighter</p>
-                        <p class="price">235<span>грн.</span></p>
-                        <a href="javascript:void(0)"></a>
-                    </div>
-                </div>
-            </div>
-        </section>
+      
 
-        <section class="subscription">
-            <div class="container">
-                <div class="sub-cont">
-                    <h3>Будьте в курсах всех новинок!</h3>
-                    <form>
-                        <input type="text" placeholder="Имя">
-                        <input type="email" placeholder="E-mail">
-                        <input type="submit" value="Подписаться!">
-                    </form>
-                </div>
-            </div>
-        </section>
+
 <?php echo $footer; ?>
+<?php } ?>
